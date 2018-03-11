@@ -86,15 +86,15 @@ var RequestClass = /** @class */ (function () {
                 req = req.query(q);
             }
         }
-        if (this.__headers) {
-            for (var field in this.__headers)
-                req = req.set(field, this.__headers[field]);
-        }
         if (this.__data && this.__data.length > 0) {
             for (var _b = 0, _c = this.__data; _b < _c.length; _b++) {
                 var data = _c[_b];
                 req = req.send(data);
             }
+        }
+        if (this.__headers) {
+            for (var field in this.__headers)
+                req = req.set(field, this.__headers[field]);
         }
         return req;
     };

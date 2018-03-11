@@ -6,7 +6,8 @@
   "types": "./js/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test-hc": "node ./js/test/testHC.js"
+    "test-hc": "node ./js/test/testHC.js",
+    "test-ss": "node ./js/test/testSS.js"
   },
   "author": "Wen Chang",
   "repository": {

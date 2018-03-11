@@ -16,6 +16,9 @@ if (!hc_api_secret) {
     console.error("!!! Error: env. var. 'HC_API_SECRET' is not set");
     process.exit(1);
 }
+console.log("hc_base_url=" + hc_base_url);
+console.log("hc_api_key=" + hc_api_key);
+console.log("hc_api_secret=" + hc_api_secret);
 function getApiAccessForHC(hcAccess) {
     var apiAccess = {
         baseUrl: hcAccess.baseUrl,
@@ -32,14 +35,14 @@ function getApiAccessForHC(hcAccess) {
     };
     return apiAccess;
 }
-var hcClient = api.Client.init(function () {
+var client = api.Client.init(function () {
     return Promise.resolve(getApiAccessForHC({
         baseUrl: hc_base_url,
         apiKey: hc_api_key,
         apiSecret: hc_api_secret
     }));
 });
-hcClient.api("/v2/property/geocode")
+client.api("/v2/property/geocode")
     .query({ "address": "43 Valmonte Plaza", "zipcode": "90274" })
     .get()
     .then(function (value) {

@@ -18,6 +18,10 @@ if (!hc_api_secret) {
     process.exit(1);
 }
 
+console.log(`hc_base_url=${hc_base_url}`);
+console.log(`hc_api_key=${hc_api_key}`);
+console.log(`hc_api_secret=${hc_api_secret}`);
+
 interface HouseCanaryApiAccess {
     baseUrl: string;
     apiKey: string;
@@ -41,7 +45,7 @@ function getApiAccessForHC(hcAccess: HouseCanaryApiAccess): api.ApiAccess {
     return apiAccess;
 }
 
-let hcClient = api.Client.init(() => {
+let client = api.Client.init(() => {
     return Promise.resolve(getApiAccessForHC({
         baseUrl: hc_base_url
         ,apiKey: hc_api_key
@@ -49,7 +53,7 @@ let hcClient = api.Client.init(() => {
     }));
 });
 
-hcClient.api("/v2/property/geocode")
+client.api("/v2/property/geocode")
 .query({"address": "43 Valmonte Plaza", "zipcode": "90274"})
 .get()
 .then((value: any) => {
