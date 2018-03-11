@@ -1,0 +1,22 @@
+{
+  "name": "rest-api-client",
+  "version": "1.0.0",
+  "description": "Generic REST API Client",
+  "main": "./js/index.js",
+  "types": "./js/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test-hc": "node ./js/test/testHC.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/js-base64": "^2.3.1",
+    "@types/superagent": "^3.5.7",
+    "js-base64": "^2.4.3",
+    "superagent": "^3.8.2"
+  },
+  "devDependencies": {
+    "typescript": "^2.7.2"
+  }
+}
