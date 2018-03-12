@@ -4,6 +4,7 @@ var request = require("superagent");
 var base64 = require("js-base64");
 ;
 ;
+var DEFAULT_API_ACCESS_SOURCE = function () { return Promise.resolve(null); };
 var RequestClass = /** @class */ (function () {
     function RequestClass(__apiAccessSource, __path) {
         this.__apiAccessSource = __apiAccessSource;
@@ -22,7 +23,9 @@ var RequestClass = /** @class */ (function () {
         }
     }
     Object.defineProperty(RequestClass.prototype, "apiAccessSource", {
-        get: function () { return this.__apiAccessSource; },
+        get: function () {
+            return (this.__apiAccessSource ? this.__apiAccessSource : DEFAULT_API_ACCESS_SOURCE);
+        },
         enumerable: true,
         configurable: true
     });
@@ -64,7 +67,9 @@ var RequestClass = /** @class */ (function () {
                     token = tc.token;
                 else if (tokenType === "Basic") {
                     var bc = tc.token;
-                    token = base64.Base64.encode(bc.username + ":" + bc.password);
+                    if (bc && bc.username && bc.password) {
+                        token = base64.Base64.encode(bc.username + ":" + bc.password);
+                    }
                 }
                 if (token) {
                     value = tokenType + " " + token;
@@ -78,7 +83,7 @@ var RequestClass = /** @class */ (function () {
     };
     RequestClass.prototype.request = function (method, access) {
         var methodFunction = RequestClass.methodMap[method.toString()];
-        var req = methodFunction.call(request, this.fullPath(access.baseUrl));
+        var req = methodFunction.call(request, this.fullPath(access ? (access.baseUrl ? access.baseUrl : "") : ""));
         req = this.placeCredentialInRequest(req, access);
         if (this.__queries && this.__queries.length > 0) {
             for (var _i = 0, _a = this.__queries; _i < _a.length; _i++) {
@@ -175,7 +180,7 @@ var RequestClass = /** @class */ (function () {
 }());
 var Client = /** @class */ (function () {
     function Client(accessSource) {
-        this.__accessSource = (accessSource ? accessSource : function () { return Promise.resolve(null); });
+        this.__accessSource = (accessSource ? accessSource : DEFAULT_API_ACCESS_SOURCE);
     }
     Client.init = function (accessSource) {
         return new Client(accessSource);

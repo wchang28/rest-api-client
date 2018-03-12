@@ -32,6 +32,8 @@ export interface ApiAccess {
 
 export type ApiAccessSource = () => Promise<ApiAccess>;
 
+let DEFAULT_API_ACCESS_SOURCE: ApiAccessSource = () => Promise.resolve<ApiAccess>(null);
+
 export interface IError {
     status: number;
     body: any;
@@ -68,7 +70,9 @@ class RequestClass implements Request {
             RequestClass.methodMap["OPTIONS"] = request.options;
         }
     }
-    private get apiAccessSource(): ApiAccessSource {return this.__apiAccessSource;}
+    private get apiAccessSource(): ApiAccessSource {
+        return (this.__apiAccessSource ? this.__apiAccessSource : DEFAULT_API_ACCESS_SOURCE);
+    }
     public query(q: any): this {
         this.__queries.push(q);
         return this;
@@ -105,7 +109,9 @@ class RequestClass implements Request {
                     token = tc.token;
                 else if (tokenType === "Basic") {
                     let bc = tc.token as BasicCredential;
-                    token = base64.Base64.encode(`${bc.username}:${bc.password}`);
+                    if (bc && bc.username && bc.password) {
+                        token = base64.Base64.encode(`${bc.username}:${bc.password}`);
+                    }
                 }
                 if (token) {
                     value = `${tokenType} ${token}`;
@@ -120,7 +126,7 @@ class RequestClass implements Request {
 
     private request(method: HttpMethod, access: ApiAccess): request.SuperAgentRequest {
         let methodFunction = RequestClass.methodMap[method.toString()];
-        let req: request.SuperAgentRequest = methodFunction.call(request, this.fullPath(access.baseUrl));
+        let req: request.SuperAgentRequest = methodFunction.call(request, this.fullPath(access ? (access.baseUrl ? access.baseUrl: "") : ""));
         req = this.placeCredentialInRequest(req, access);
         if (this.__queries && this.__queries.length > 0) {
             for (let q of this.__queries)
@@ -207,7 +213,7 @@ class RequestClass implements Request {
 export class Client {
     private __accessSource: ApiAccessSource;
     private constructor(accessSource?: ApiAccessSource) {
-        this.__accessSource = (accessSource ? accessSource : () => Promise.resolve<ApiAccess>(null));
+        this.__accessSource = (accessSource ? accessSource : DEFAULT_API_ACCESS_SOURCE);
     }
     public static init(accessSource?: ApiAccessSource): Client {
         return new Client(accessSource);
