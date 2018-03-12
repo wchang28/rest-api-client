@@ -16,9 +16,13 @@ if (!hc_api_secret) {
     console.error("!!! Error: env. var. 'HC_API_SECRET' is not set");
     process.exit(1);
 }
+var address = process.argv[2] ? process.argv[2] : "43 Valmonte Plaza";
+var zipcode = process.argv[3] ? process.argv[3] : "90274";
 console.log("hc_base_url=" + hc_base_url);
 console.log("hc_api_key=" + hc_api_key);
 console.log("hc_api_secret=" + hc_api_secret);
+console.log("address=" + address);
+console.log("zipcode=" + zipcode);
 function getApiAccessForHC(hcAccess) {
     var apiAccess = {
         baseUrl: hcAccess.baseUrl,
@@ -44,7 +48,7 @@ var client = api.Client.init(function () {
 });
 /*
 client.api("/v2/property/geocode")
-.query({"address": "43 Valmonte Plaza", "zipcode": "90274"})
+.query({address, zipcode})
 .get()
 .then((value: any) => {
     console.log(`ret=\n${JSON.stringify(value, null, 2)}`);
@@ -80,7 +84,7 @@ var allPropertyComponents = [
     "property/value_within_block"
 ];
 client.api("/v2/property/component_mget")
-    .query({ "address": "43 Valmonte Plaza", "zipcode": "90274", "components": allPropertyComponents.join(",") })
+    .query({ address: address, zipcode: zipcode, components: allPropertyComponents.join(",") })
     .get()
     .then(function (value) {
     console.log("ret=\n" + JSON.stringify(value, null, 2));

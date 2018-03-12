@@ -18,9 +18,14 @@ if (!hc_api_secret) {
     process.exit(1);
 }
 
+let address = process.argv[2] ? process.argv[2] : "43 Valmonte Plaza";
+let zipcode = process.argv[3] ? process.argv[3] : "90274";
+
 console.log(`hc_base_url=${hc_base_url}`);
 console.log(`hc_api_key=${hc_api_key}`);
 console.log(`hc_api_secret=${hc_api_secret}`);
+console.log(`address=${address}`);
+console.log(`zipcode=${zipcode}`);
 
 interface HouseCanaryApiAccess {
     baseUrl: string;
@@ -55,7 +60,7 @@ let client = api.Client.init(() => {
 
 /*
 client.api("/v2/property/geocode")
-.query({"address": "43 Valmonte Plaza", "zipcode": "90274"})
+.query({address, zipcode})
 .get()
 .then((value: any) => {
     console.log(`ret=\n${JSON.stringify(value, null, 2)}`);
@@ -93,7 +98,7 @@ let allPropertyComponents: string[] = [
 ];
 
 client.api("/v2/property/component_mget")
-.query({"address": "43 Valmonte Plaza", "zipcode": "90274", "components": allPropertyComponents.join(",")})
+.query({address, zipcode, components: allPropertyComponents.join(",")})
 .get()
 .then((value: any) => {
     console.log(`ret=\n${JSON.stringify(value, null, 2)}`);
