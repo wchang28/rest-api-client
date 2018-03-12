@@ -17,5 +17,6 @@
     "./ts/index.ts",
     "./ts/test/testHC.ts",
     "./ts/test/testSS.ts",
+    "./ts/test/testSF.ts",
   ]
 }

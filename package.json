@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc",
     "test-hc": "node ./js/test/testHC.js",
-    "test-ss": "node ./js/test/testSS.js"
+    "test-ss": "node ./js/test/testSS.js",
+    "test-sf": "node ./js/test/testSF.js"
   },
   "author": "Wen Chang",
   "repository": {
