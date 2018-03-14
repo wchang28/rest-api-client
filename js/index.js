@@ -10,6 +10,7 @@ var RequestClass = /** @class */ (function () {
         this.__apiAccessSource = __apiAccessSource;
         this.__path = __path;
         this.__queries = [];
+        this.__form = false;
         this.__headers = {};
         this.__data = [];
         if (!RequestClass.methodMap) {
@@ -34,6 +35,11 @@ var RequestClass = /** @class */ (function () {
         return this;
     };
     ;
+    // turn on the form flag (application/x-www-form-urlencoded)
+    RequestClass.prototype.form = function () {
+        this.__form = true;
+        return this;
+    };
     RequestClass.prototype.header = function (field, val) {
         this.__headers[field.toLocaleLowerCase()] = val;
         return this;
@@ -90,6 +96,9 @@ var RequestClass = /** @class */ (function () {
                 var q = _a[_i];
                 req = req.query(q);
             }
+        }
+        if (this.__form) {
+            req = req.type("form");
         }
         if (this.__data && this.__data.length > 0) {
             for (var _b = 0, _c = this.__data; _b < _c.length; _b++) {

@@ -18,8 +18,8 @@ export declare type QueryCredential = {
 export declare type ApiCredential = HeaderCredential | QueryCredential;
 export interface ApiAccess {
     baseUrl: string;
-    credentialPlacement: CredentialPlacement;
-    credential: ApiCredential;
+    credentialPlacement?: CredentialPlacement;
+    credential?: ApiCredential;
 }
 export declare type ApiAccessSource = () => Promise<ApiAccess>;
 export interface IError {

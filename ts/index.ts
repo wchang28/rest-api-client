@@ -26,8 +26,8 @@ export type ApiCredential = HeaderCredential | QueryCredential;
 
 export interface ApiAccess {
     baseUrl: string;
-    credentialPlacement: CredentialPlacement;
-    credential: ApiCredential;
+    credentialPlacement?: CredentialPlacement;
+    credential?: ApiCredential;
 }
 
 export type ApiAccessSource = () => Promise<ApiAccess>;
@@ -52,12 +52,14 @@ export interface Request {
 
 class RequestClass implements Request {
     private __queries: any[];
+    private __form: boolean;
     private __headers: {[field: string]: string};
     private __data: any[];
     private static methodMap: {[method: string]: (url: string, callback?: (err: any, res: request.Response) => void) => request.SuperAgentRequest } = null;
    
     constructor(private __apiAccessSource: ApiAccessSource, private __path: string) {
         this.__queries = [];
+        this.__form = false;
         this.__headers = {};
         this.__data = [];
         if (!RequestClass.methodMap) {
@@ -77,6 +79,11 @@ class RequestClass implements Request {
         this.__queries.push(q);
         return this;
     };
+    // turn on the form flag (application/x-www-form-urlencoded)
+    public form(): this {
+        this.__form = true;
+        return this;
+    } 
     public header(field: string, val: string): this {
         this.__headers[field.toLocaleLowerCase()] = val;
         return this;
@@ -131,6 +138,9 @@ class RequestClass implements Request {
         if (this.__queries && this.__queries.length > 0) {
             for (let q of this.__queries)
                 req = req.query(q);
+        }
+        if (this.__form) {
+            req = req.type("form");
         }
         if (this.__data && this.__data.length > 0) {
             for (let data of this.__data)
