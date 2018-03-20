@@ -229,7 +229,19 @@ export class Client {
     public static init(accessSource?: ApiAccessSource): Client {
         return new Client(accessSource);
     }
-    api(path: string): Request {
+    public mount(path: string): Client {
+        let _this = this;
+        let accessSource: ApiAccessSource = () => {
+            return _this.__accessSource()
+            .then((value: ApiAccess) => {
+                let access = value || {baseUrl: ""};
+                access.baseUrl += path;
+                return access;
+            });
+        };
+        return Client.init(accessSource);
+    }
+    public api(path: string): Request {
         return new RequestClass(this.__accessSource, path);
     }
 }

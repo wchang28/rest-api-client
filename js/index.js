@@ -194,6 +194,18 @@ var Client = /** @class */ (function () {
     Client.init = function (accessSource) {
         return new Client(accessSource);
     };
+    Client.prototype.mount = function (path) {
+        var _this = this;
+        var accessSource = function () {
+            return _this.__accessSource()
+                .then(function (value) {
+                var access = value || { baseUrl: "" };
+                access.baseUrl += path;
+                return access;
+            });
+        };
+        return Client.init(accessSource);
+    };
     Client.prototype.api = function (path) {
         return new RequestClass(this.__accessSource, path);
     };

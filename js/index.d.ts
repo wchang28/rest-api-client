@@ -41,5 +41,6 @@ export declare class Client {
     private __accessSource;
     private constructor();
     static init(accessSource?: ApiAccessSource): Client;
+    mount(path: string): Client;
     api(path: string): Request;
 }
