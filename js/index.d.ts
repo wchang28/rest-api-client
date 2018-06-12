@@ -30,6 +30,7 @@ export interface Request {
     query(q: any): this;
     form(): this;
     header(field: string, val: string): this;
+    timeout(ms: number): this;
     send(data?: any): this;
     get<T>(): Promise<T>;
     post<T>(): Promise<T>;

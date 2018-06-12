@@ -13,6 +13,7 @@ var RequestClass = /** @class */ (function () {
         this.__form = false;
         this.__headers = {};
         this.__data = [];
+        this.__timeoutMS = null;
         if (!RequestClass.methodMap) {
             RequestClass.methodMap = {};
             RequestClass.methodMap["GET"] = request.get;
@@ -42,6 +43,10 @@ var RequestClass = /** @class */ (function () {
     };
     RequestClass.prototype.header = function (field, val) {
         this.__headers[field.toLocaleLowerCase()] = val;
+        return this;
+    };
+    RequestClass.prototype.timeout = function (ms) {
+        this.__timeoutMS = ms;
         return this;
     };
     RequestClass.prototype.send = function (data) {
@@ -109,6 +114,9 @@ var RequestClass = /** @class */ (function () {
         if (this.__headers) {
             for (var field in this.__headers)
                 req = req.set(field, this.__headers[field]);
+        }
+        if (typeof this.__timeoutMS === "number" && this.__timeoutMS > 0) {
+            req = req.timeout(this.__timeoutMS);
         }
         return req;
     };

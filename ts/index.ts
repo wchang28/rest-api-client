@@ -43,6 +43,7 @@ export interface Request {
     query(q: any): this;
     form(): this;
     header(field: string, val: string): this;
+    timeout(ms: number): this;
     send(data?: any): this;
     get<T>(): Promise<T>;
     post<T>(): Promise<T>;
@@ -56,6 +57,7 @@ class RequestClass implements Request {
     private __form: boolean;
     private __headers: {[field: string]: string};
     private __data: any[];
+    private __timeoutMS: number;
     private static methodMap: {[method: string]: (url: string, callback?: (err: any, res: request.Response) => void) => request.SuperAgentRequest } = null;
    
     constructor(private __apiAccessSource: ApiAccessSource, private __path: string) {
@@ -63,6 +65,7 @@ class RequestClass implements Request {
         this.__form = false;
         this.__headers = {};
         this.__data = [];
+        this.__timeoutMS = null;
         if (!RequestClass.methodMap) {
             RequestClass.methodMap = {};
             RequestClass.methodMap["GET"] = request.get;
@@ -87,6 +90,10 @@ class RequestClass implements Request {
     } 
     public header(field: string, val: string): this {
         this.__headers[field.toLocaleLowerCase()] = val;
+        return this;
+    }
+    public timeout(ms: number): this {
+        this.__timeoutMS = ms;
         return this;
     }
     public send(data?: any): this {
@@ -150,6 +157,9 @@ class RequestClass implements Request {
         if (this.__headers) {
             for (let field in this.__headers)
                 req = req.set(field, this.__headers[field]);
+        }
+        if (typeof this.__timeoutMS === "number" && this.__timeoutMS > 0) {
+            req = req.timeout(this.__timeoutMS);
         }
         return req;
     }
